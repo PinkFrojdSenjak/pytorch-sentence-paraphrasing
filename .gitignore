@@ -3,3 +3,4 @@ dataset
 valid.csv
 my-model
 .data
+__pycache__
