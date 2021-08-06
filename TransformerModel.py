@@ -3,7 +3,7 @@ import numpy as np
 from torch import nn
 import pandas as pd
 import math
-
+from torch.nn import TransformerEncoder, TransformerEncoderLayer
 
 class Transformer(nn.Module):
    
@@ -22,7 +22,7 @@ class Transformer(nn.Module):
 
         self.model_type = "Transformer"
         self.dim_model = dim_model
-        
+        self.num_tokens = num_tokens
         
         self.positional_encoder = PositionalEncoding(
             dim_model=dim_model, dropout_p=dropout_p, max_len=5000
@@ -35,7 +35,17 @@ class Transformer(nn.Module):
             num_decoder_layers=num_decoder_layers,
             dropout=dropout_p,
         )
-        self.out = nn.Linear(dim_model, num_tokens)
+        #encoder_layers = TransformerEncoderLayer(self.dim_model, self.num_head, self.d_hid, self.dropout)
+
+        self.out = nn.Linear(dim_model, 100000)
+
+        self.init_weights()
+        
+    def init_weights(self) -> None:
+        initrange = 0.1
+        self.encoder.weight.data.uniform_(-initrange, initrange)
+        self.decoder.bias.data.zero_()
+        self.decoder.weight.data.uniform_(-initrange, initrange)
         
     def forward(self, src, tgt,tgt_mask = None , src_pad_mask=None, tgt_pad_mask=None):
         # Src size must be (batch_size, src sequence length)
@@ -54,13 +64,14 @@ class Transformer(nn.Module):
         # to obtain size (sequence length, batch_size, dim_model),
         src = src.permute(1,0,2)
         tgt = tgt.permute(1,0,2)
+        tgt_mask = nn.Transformer.generate_square_subsequent_mask(self.num_tokens, self.num_tokens)
       
         # Transformer blocks - Out size = (sequence length, batch_size, num_tokens)
-        transformer_out = self.transformer(src, tgt, tgt_mask=None, src_key_padding_mask=src_pad_mask, tgt_key_padding_mask=tgt_pad_mask)
+        transformer_out = self.transformer(src, tgt, tgt_mask=tgt_mask, src_key_padding_mask=src_pad_mask, tgt_key_padding_mask=tgt_pad_mask)
         
         out = self.out(transformer_out)
         
-        #out = out.squeeze()
+        
         return out
     '''       
     def get_tgt_mask(self, size) -> torch.tensor:
