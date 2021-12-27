@@ -15,8 +15,10 @@ def train(dataloader, model, loss_fn, optimizer, device):
     model.train()
     total_loss = 0
     for batch, (X, y) in enumerate(dataloader):
-        X,y = X.to(device), y.to(device)
         input_ids, mask = X['input_ids'], X['attention_mask']
+        y = y.to(device)
+        input_ids = input_ids.squeeze(1).to(device)
+        mask = mask.to(device) 
         pred = model(input_ids, mask)
         loss = loss_fn(pred, y)
         optimizer.zero_grad()
@@ -33,9 +35,11 @@ def test(dataloader, model, loss_fn, optimizer, device):
     model.eval()
     total_loss, acc = 0, 0
     for batch, (X, y) in enumerate(dataloader):
-        X, y = X.to(device), y.to(device)
         with torch.no_grad():
             input_ids, mask = X['input_ids'], X['attention_mask']
+            y = y.to(device)
+            input_ids = input_ids.squeeze(1).to(device)
+            mask = mask.to(device)
             pred = model(input_ids, mask)
             loss = loss_fn(pred, y)
             acc+= (pred.argmax(1) == y).type(torch.float).sum().item()

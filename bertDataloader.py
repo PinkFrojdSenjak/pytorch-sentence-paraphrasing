@@ -36,7 +36,7 @@ class CustomDataset(torch.utils.data.Dataset):
     return self.texts[idx]
 
   def __getitem__(self, idx):
-    return torch.from_numpy(self.get_batch_texts(idx)), torch.from_numpy(self.get_batch_labels(idx))
+    return self.get_batch_texts(idx), self.get_batch_labels(idx)
 
 def getDataloader(df : pd.DataFrame) -> tuple:
     """
