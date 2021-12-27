@@ -1,6 +1,7 @@
 from bertDataloader import getDataloader
 from bertModel import BertClassifier
 from torchvision import transforms
+from google import colab
 import pandas as pd
 import torch
 import numpy as np
@@ -51,3 +52,19 @@ epochs = 10
 model = BertClassifier().to(device)
 loss_fn = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr = 1e-3)
+
+train_losses = []
+val_losses = []
+val_accs = []
+
+for epoch in range(epochs):
+    print(f'Epoch {epoch}/{epochs} \n---------------------------------')
+    print('Training: ')
+    tr_loss = train(train_dataloader, model, loss_fn, optimizer, device)
+    train_losses.append(tr_loss)
+    print('Validation:')
+    val_loss, acc = test(val_dataloader, model, loss_fn, optimizer, device)
+    val_losses.append(val_loss)
+    val_accs.append(acc)
+    torch.save(model.state_dict(), 'checkpoint.pth')
+    colab.files.download('checkpoint.pth')

@@ -21,6 +21,7 @@ class CustomDataset(torch.utils.data.Dataset):
     self.labels = [map_labels[label] for label in df['category']]
     self.texts = [tokenizer(text, padding='max_length', max_length = 512, 
                             truncation=True, return_tensors="pt") for text in df['text']]
+  
 
   def classes(self):
     return self.labels
@@ -32,7 +33,7 @@ class CustomDataset(torch.utils.data.Dataset):
     return np.array(self.labels[idx])
   
   def get_batch_texts(self, idx):
-    return np.array(self.texts[idx])
+    return self.texts[idx]
 
   def __getitem__(self, idx):
     return torch.from_numpy(self.get_batch_texts(idx)), torch.from_numpy(self.get_batch_labels(idx))
