@@ -38,7 +38,7 @@ class CustomDataset(torch.utils.data.Dataset):
   def __getitem__(self, idx):
     return self.get_batch_texts(idx), self.get_batch_labels(idx)
 
-def getDataloader(df : pd.DataFrame) -> tuple:
+def getDataloader(df : pd.DataFrame, batch_size = 8) -> tuple:
     """
         This function returns a tuple : (train_dataloader, val_dataloader, test_dataloader)
     """
@@ -49,7 +49,7 @@ def getDataloader(df : pd.DataFrame) -> tuple:
     val_dataset = CustomDataset(val_df)
     test_dataset = CustomDataset(test_df)
 
-    train_dataloader = DataLoader(train_dataset, batch_size = 64)
-    val_dataloader = DataLoader(val_dataset, batch_size = 64)
-    test_dataloader = DataLoader(test_dataset, batch_size = 64)
+    train_dataloader = DataLoader(train_dataset, batch_size = batch_size)
+    val_dataloader = DataLoader(val_dataset, batch_size = batch_size)
+    test_dataloader = DataLoader(test_dataset, batch_size = batch_size)
     return (train_dataloader, val_dataloader, test_dataloader)

@@ -10,6 +10,8 @@ import pandas as pd
 import torch
 import numpy as np
 
+
+
 def train(dataloader, model, loss_fn, optimizer, device):
     num_batches = len(dataloader)
     model.train()
@@ -52,6 +54,9 @@ df = pd.read_csv('../drive/MyDrive/tempFolder/bbc-text.csv')
 train_dataloader, val_dataloader, test_dataloader = getDataloader(df)
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+if device == 'cuda':
+    torch.cuda.empty_cache()
+
 epochs = 10
 model = BertClassifier().to(device)
 loss_fn = nn.CrossEntropyLoss()
