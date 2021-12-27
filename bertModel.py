@@ -16,7 +16,7 @@ class BertClassifier(nn.Module):
     
   def forward(self, input_id, mask):
     _, pooled_output = self.bert(input_ids = input_id, attention_mask = mask, return_dict = False)
-    dropout_output = self.drouput(pooled_output)
+    dropout_output = self.dropout(pooled_output)
     linear_output = self.linear(dropout_output)
     result = self.relu(linear_output)
     return result
